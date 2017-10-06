@@ -30,7 +30,6 @@ void ofApp::setup()
 {
     ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight());
     ofSetWindowPosition(0, 20);
-    currentImage;
     millisImageTimeout = 5000;
     imageStartTime = 0;
     if(backgroundPlayer.loadMovie("/Users/sam/Documents/openFrameworks/of_v0.9.8_osx_release/apps/myApps/ULR-GS/bin/Pigeon.mp4")) {
