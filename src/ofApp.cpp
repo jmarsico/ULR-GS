@@ -30,9 +30,12 @@ void ofApp::setup()
 {
     ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight());
     ofSetWindowPosition(0, 20);
-    currentImage = new ofImage();
+    currentImage;
+    millisImageTimeout = 5000;
+    imageStartTime = 0;
     if(backgroundPlayer.loadMovie("/Users/sam/Documents/openFrameworks/of_v0.9.8_osx_release/apps/myApps/ULR-GS/bin/Pigeon.mp4")) {
         backgroundPlayer.play();
+        backgroundPlayer.setLoopState(OF_LOOP_NORMAL);
     } else {
         ofLog(OF_LOG_NOTICE, "movie loading unsuccessful");
     }
@@ -40,7 +43,7 @@ void ofApp::setup()
     
     std::string folderToWatch = ofToDataPath("", true);
     bool listExistingItemsOnStart = true;
-
+    
     watcher.addPath(folderToWatch, listExistingItemsOnStart, &fileFilter);
     
 }
@@ -48,12 +51,10 @@ void ofApp::setup()
 void ofApp::update() {
     backgroundPlayer.update();
 
-    if(currentImage != NULL && currentImage->isAllocated()) {
-        currentImage = new ofImage();
-        currentImage->load(nextImage);
-    } else {
-        currentImage->load(nextImage);
-        imageLoaded = true;
+    if(newImageReady) {
+        currentImage.clear();
+        currentImage.load(nextImage);
+        newImageReady = false;
     }
 }
 
@@ -62,35 +63,21 @@ void ofApp::draw()
     ofBackground(0);
     backgroundPlayer.draw(0, 0);
     ofFill();
-    if(currentImage->isAllocated()) {
-        currentImage->draw(100, 100);
+    if(currentImage.isAllocated() && imageStartTime < ofGetElapsedTimeMillis() + millisImageTimeout) {
+        currentImage.draw(100, 100);
     }
-    
-    int y = TXT_HEIGHT;
-
-//    for (std::size_t i = 0; i < messages.size(); ++i)
-//    {
-//        ofSetColor(ofMap(i, 0, messages.size(), 255, 90));
-//        ofDrawBitmapString(messages[i], 10, y);
-//        y += TXT_HEIGHT;
-//    }
-    
 }
 
 
 void ofApp::gotMessage(ofMessage msg)
 {
-    int height = ofGetHeight();
-    ofLog(OF_LOG_NOTICE, msg.message);
-    
-    messages.push_front(msg.message);
-    
-    
-    
     
     if(ofIsStringInString( msg.message, ".png")) {
         printf("event contains .png");
+        printf("Elapsed Time milliseconds: %llu", ofGetElapsedTimeMillis());
+        imageStartTime = ofGetElapsedTimeMillis();
         nextImage = msg.message;
+        newImageReady = true;
     }
     
     

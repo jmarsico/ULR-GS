@@ -83,8 +83,9 @@ public:
     std::deque<std::string> messages;
     
     std::string nextImage;
-    ofImage *currentImage;
+    ofImage currentImage;
     ofVideoPlayer backgroundPlayer;
-    
-    Boolean imageLoaded = false;
+    int imageStartTime;
+    int millisImageTimeout;
+    Boolean newImageReady = false;
 };
