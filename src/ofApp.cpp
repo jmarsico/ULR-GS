@@ -63,7 +63,7 @@ void ofApp::draw()
     ofBackground(0);
     backgroundPlayer.draw(0, 0);
     ofFill();
-    if(currentImage.isAllocated() && imageStartTime < ofGetElapsedTimeMillis() + millisImageTimeout) {
+    if(currentImage.isAllocated() && imageStartTime+millisImageTimeout > ofGetElapsedTimeMillis()) {
         currentImage.draw(100, 100);
     }
 }
