@@ -26,7 +26,8 @@ void ofApp::setup() {
     settings.enableLooping = true;		//default true
     settings.enableAudio = false;		//default true, save resources by disabling
     
-    
+    currentImage.allocate(width,height,OF_IMAGE_COLOR); 
+    currentImage.load("screen_hub_spoke_zones-01.jpg");
     backgroundVideo.setup(settings);
 //    backgroundVideo.enableLooping();
 
@@ -39,7 +40,7 @@ void ofApp::setup() {
 	
 	string folderToWatch;
 	#ifdef TARGET_RASPBERRY_PI
-		folderToWatch = ofToDataPath("/home/pi/inbox", false);
+		folderToWatch = ofToDataPath("/home/pi/inbox/", false);
 	#else
 		folderToWatch = ofToDataPath("", false);
 	#endif
@@ -53,14 +54,15 @@ void ofApp::update() {
 	
 	// if there's a new image
     if (newImageReady) {
-		
+	ofLog() << "new image************";	
 		// clear the old one
-        currentImage.clear();
+//        currentImage.clear();
 		
         currentImage.allocate(width,height, OF_IMAGE_COLOR);
         
-		// load the new one
-        if(currentImage.load(ofToDataPath(imageLocation))){
+		// load the new on
+	bool success = currentImage.load(imageLocation);
+        if(success){
             ofLog() << "loaded";
         } else {
             ofLog() << "could not load";
@@ -82,16 +84,16 @@ void ofApp::draw() {
     ofBackground(0);
 	
 	// draw the video
-    backgroundVideo.draw(0, 0, width, height);
+//    backgroundVideo.draw(0, 0, width, height);
 	
     ofFill();
 	
 	// if there's an image to be displayed, and it hasn't timed out
-    if ( bDrawImage ) {
+   // if ( bDrawImage ) {
 		
 		// draw the image
         currentImage.draw(0,0, width, height);
-    }
+   // }
 }
 
 
