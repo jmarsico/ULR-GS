@@ -60,7 +60,7 @@ void ofApp::update() {
         currentImage.allocate(width,height, OF_IMAGE_COLOR);
         
 		// load the new one
-        if(currentImage.load(imageLocation)){
+        if(currentImage.load(ofToDataPath(imageLocation))){
             ofLog() << "loaded";
         } else {
             ofLog() << "could not load";
@@ -102,9 +102,7 @@ void ofApp::gotMessage(ofMessage msg) {
         || ofIsStringInString(msg.message, ".jpg")
         || ofIsStringInString(msg.message, ".jpeg")) {
 		
-        ofLog() << "Event contains png, jpg or jpeg";
-        ofLog() << "Elapsed Time milliseconds: " << ofGetElapsedTimeMillis();
-        ofLog() << "image path: " << msg.message;
+
 		
         imageStartTime = ofGetElapsedTimeMillis();
 		
@@ -112,6 +110,9 @@ void ofApp::gotMessage(ofMessage msg) {
         imageLocation = msg.message;
         newImageReady = true;
         bDrawImage = true;
+        
+        ofLog() << "Elapsed Time milliseconds: " << imageStartTime;
+        ofLog() << "image path: " << imageLocation;
 		
     }
     
