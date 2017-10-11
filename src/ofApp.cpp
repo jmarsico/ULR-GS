@@ -96,8 +96,9 @@ void ofApp::gotMessage(ofMessage msg) {
         || ofIsStringInString(msg.message, ".jpg")
         || ofIsStringInString(msg.message, ".jpeg")) {
 		
-        printf("Event contains png, jpg or jpeg");
-        printf("Elapsed Time milliseconds: %llu", ofGetElapsedTimeMillis());
+        ofLog() << "Event contains png, jpg or jpeg";
+        ofLog() << "Elapsed Time milliseconds: " << ofGetElapsedTimeMillis();
+        ofLog() << "image path: " << msg.message;
 		
         imageStartTime = ofGetElapsedTimeMillis();
 		
