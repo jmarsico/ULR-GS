@@ -1,82 +1,112 @@
-// =============================================================================
-//
-// Copyright (c) 2009-2016 Christopher Baker <http://christopherbaker.net>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-// =============================================================================
-
-
 #include "ofApp.h"
 
-
-void ofApp::setup()
-{
+void ofApp::setup() {
+	
+	// set window
     ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight());
     ofSetWindowPosition(0, 20);
+	
+	// amount of time image should be displayed, in ms
     millisImageTimeout = 5000;
+	
     imageStartTime = 0;
-    if(backgroundPlayer.loadMovie("/Users/sam/Documents/openFrameworks/of_v0.9.8_osx_release/apps/myApps/ULR-GS/bin/Pigeon.mp4")) {
-        backgroundPlayer.play();
-        backgroundPlayer.setLoopState(OF_LOOP_NORMAL);
-    } else {
-        ofLog(OF_LOG_NOTICE, "movie loading unsuccessful");
-    }
+	
+	
+	string videoLocation;
+	#ifdef TARGET_RASPBERRY_PI
+		videoLocation = "/home/pi/Public/video.mp4";
+		backgroundVideo.loadMovie(videoLocation);
+	#else
+		videoLocation = "/Users/johnmars/Public/video.mp4";
+	
+		// load video
+		if (backgroundVideo.load(videoLocation)) {
+			
+			// play it
+			backgroundVideo.play();
+			backgroundVideo.setLoopState(OF_LOOP_NORMAL);
+			
+		} else {
+			ofLog(OF_LOG_NOTICE, "Video file was not loaded.");
+		}
+	#endif
+	
+	
+	
+	// set up directory watcher
     watcher.registerAllEvents(this);
-    
-    std::string folderToWatch = ofToDataPath("", true);
-    bool listExistingItemsOnStart = true;
-    
-    watcher.addPath(folderToWatch, listExistingItemsOnStart, &fileFilter);
+	
+	
+	string folderToWatch;
+	#ifdef TARGET_RASPBERRY_PI
+		folderToWatch = ofToDataPath("/mnt/watchme", false);
+	#else
+		folderToWatch = ofToDataPath("/Users/johnmars/Public", false);
+	#endif
+	
+	// start the watcher
+    watcher.addPath(folderToWatch, false, &hiddenFileFilter);
     
 }
 
 void ofApp::update() {
-    backgroundPlayer.update();
+	
+	#ifdef TARGET_RASPBERRY_PI
+	
+	#else
+		// continue to play video
+		backgroundVideo.update();
+	#endif
+	
 
-    if(newImageReady) {
+	// if there's a new image
+    if (newImageReady) {
+		
+		// clear the old one
         currentImage.clear();
-        currentImage.load(nextImage);
+		
+		// load the new one
+        currentImage.load(imageLocation);
+		
         newImageReady = false;
     }
+	
 }
 
-void ofApp::draw()
-{
+void ofApp::draw() {
+	
+	// clear the frame
     ofBackground(0);
-    backgroundPlayer.draw(0, 0);
+	
+	// draw the video
+    backgroundVideo.draw(0, 0, ofGetWidth(), ofGetHeight());
+	
     ofFill();
-    if(currentImage.isAllocated() && imageStartTime+millisImageTimeout > ofGetElapsedTimeMillis()) {
-        currentImage.draw(100, 100);
+	
+	// if there's an image to be displayed, and it hasn't timed out
+    if (currentImage.isAllocated() && imageStartTime + millisImageTimeout > ofGetElapsedTimeMillis()) {
+		
+		// draw the image
+        currentImage.draw(50, 50, ofGetWidth() - 100, ofGetHeight() - 100);
+		
     }
 }
 
 
-void ofApp::gotMessage(ofMessage msg)
-{
-    
-    if(ofIsStringInString( msg.message, ".png")) {
-        printf("event contains .png");
+void ofApp::gotMessage(ofMessage msg) {
+	
+	// if the new file is a PNG
+    if (ofIsStringInString(msg.message, ".png")) {
+		
+        printf("Event contains PNG");
         printf("Elapsed Time milliseconds: %llu", ofGetElapsedTimeMillis());
+		
         imageStartTime = ofGetElapsedTimeMillis();
-        nextImage = msg.message;
+		
+		// get the image ready to display
+        imageLocation = msg.message;
         newImageReady = true;
+		
     }
     
     

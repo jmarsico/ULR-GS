@@ -1,28 +1,3 @@
-// =============================================================================
-//
-// Copyright (c) 2009-2016 Christopher Baker <http://christopherbaker.net>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-// =============================================================================
-
-
 #pragma once
 
 
@@ -30,62 +5,94 @@
 #include "ofMain.h"
 #include "ofxIO.h"
 
+#ifdef TARGET_RASPBERRY_PI
+	#include "ofxOMXPlayer.h"
+#endif
 
-class ofApp: public ofBaseApp
-{
+
+
+class ofApp: public ofBaseApp {
+	
 public:
-    enum
-    {
-        TXT_HEIGHT = 14
-    };
 
     void setup();
     void update();
     void draw();
 
+	// parse items from message queue. overrides built-in defininition of gotMessage()
     void gotMessage(ofMessage msg);
 
-    void onDirectoryWatcherItemAdded(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt)
-    {
+	// item added to directory
+    void onDirectoryWatcherItemAdded(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
+		
+		// send a message to the message queue
         ofSendMessage(evt.item.path());
+		
+		ofLog() << "File added: " << evt.item.path();
+		
+		ofLogToFile("log.txt", true);
+		ofLog() << "File added: " << evt.item.path();
+    }
+	
+	void onDirectoryWatcherItemRemoved(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
+		ofLogToFile("log.txt", true);
+		ofSendMessage("Removed:  " + evt.item.path());
+	}
+	
+	void onDirectoryWatcherItemModified(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
+		ofLogToFile("log.txt", true);
+		ofSendMessage("Modified: " + evt.item.path());
+	}
+	
+	void onDirectoryWatcherItemMovedFrom(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
+		ofLogToFile("log.txt", true);
+		ofLogNotice("ofApp::onDirectoryWatcherItemMovedFrom") << "Moved From: " << evt.item.path();
+	}
+	
+	void onDirectoryWatcherItemMovedTo(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
+		ofLogToFile("log.txt", true);
+		ofLogNotice("ofApp::onDirectoryWatcherItemMovedTo") << "Moved To: " << evt.item.path();
+	}
+
+	// directory watcher error
+    void onDirectoryWatcherError(const Poco::Exception& exc) {
+        ofLogError() << "Error: " << exc.displayText();
+		
+		ofLogToFile("log.txt", true);
+		ofLogError() << "Error: " << exc.displayText();
     }
 
-    void onDirectoryWatcherItemRemoved(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt)
-    {
-//        ofSendMessage("Removed:  " + evt.item.path());
-    }
-
-    void onDirectoryWatcherItemModified(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt)
-    {
-        ofSendMessage(evt.item.path());
-    }
-
-    void onDirectoryWatcherItemMovedFrom(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt)
-    {
-//        ofLogNotice("ofApp::onDirectoryWatcherItemMovedFrom") << "Moved From: " << evt.item.path();
-    }
-
-    void onDirectoryWatcherItemMovedTo(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt)
-    {
-//        ofLogNotice("ofApp::onDirectoryWatcherItemMovedTo") << "Moved To: " << evt.item.path();
-    }
-
-    void onDirectoryWatcherError(const Poco::Exception& exc)
-    {
-//        ofLogError("ofApp::onDirectoryWatcherError") << "Error: " << exc.displayText();
-    }
-
-
+	// directory watcher
     ofxIO::DirectoryWatcherManager watcher;
+	
+	// filter out hidden files
+	ofxIO::HiddenFileFilter hiddenFileFilter;
+	
 
-    ofxIO::HiddenFileFilter fileFilter; // an example file filter
-
+	// double-ended queue for messages
     std::deque<std::string> messages;
-    
-    std::string nextImage;
+	
+	// video player
+	#ifdef TARGET_RASPBERRY_PI
+		ofxOMXPlayer backgroundVideo;
+	#else
+		ofVideoPlayer backgroundVideo;
+	#endif
+	
+	
+	// location of next image
+    std::string imageLocation;
+	
+	// image
     ofImage currentImage;
-    ofVideoPlayer backgroundPlayer;
+	
+	// when to start image
     int imageStartTime;
+	
+	// time image should be displayed, in ms
     int millisImageTimeout;
-    Boolean newImageReady = false;
+	
+	// flag to display image
+    bool newImageReady = false;
+	
 };
