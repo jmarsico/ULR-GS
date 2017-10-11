@@ -14,7 +14,7 @@ void ofApp::setup() {
 	
 	string videoLocation;
 	#ifdef TARGET_RASPBERRY_PI
-		videoLocation = "video.mp4";
+		videoLocation = "/home/pi/video.mp4";
 		backgroundVideo.loadMovie(videoLocation);
         backgroundVideo.enableLooping();
 	#else
@@ -40,7 +40,7 @@ void ofApp::setup() {
 	
 	string folderToWatch;
 	#ifdef TARGET_RASPBERRY_PI
-		folderToWatch = ofToDataPath("", false);
+		folderToWatch = ofToDataPath("/home/pi/inbox", false);
 	#else
 		folderToWatch = ofToDataPath("", false);
 	#endif
