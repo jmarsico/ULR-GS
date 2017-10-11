@@ -57,6 +57,8 @@ void ofApp::update() {
 		// clear the old one
         currentImage.clear();
 		
+        currentImage.allocate(width,height, OF_IMAGE_COLOR);
+        
 		// load the new one
         if(currentImage.load(imageLocation)){
             ofLog() << "loaded";
@@ -69,7 +71,6 @@ void ofApp::update() {
     
     if(imageStartTime + millisImageTimeout > ofGetElapsedTimeMillis()){
         bDrawImage = false;
-        ofLog() << "finished showing image";
     }
     
 	
