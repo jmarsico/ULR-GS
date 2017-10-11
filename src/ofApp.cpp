@@ -13,24 +13,19 @@ void ofApp::setup() {
 	
 	
 	string videoLocation;
-	#ifdef TARGET_RASPBERRY_PI
-		videoLocation = "/home/pi/video.mp4";
-		backgroundVideo.loadMovie(videoLocation);
-        backgroundVideo.enableLooping();
-	#else
-		videoLocation = "video.mp4";
-	
-		// load video
-		if (backgroundVideo.load(videoLocation)) {
-			
-			// play it
-			backgroundVideo.play();
-			backgroundVideo.setLoopState(OF_LOOP_NORMAL);
-			
-		} else {
-			ofLog(OF_LOG_NOTICE, "Video file was not loaded.");
-		}
-	#endif
+    videoLocation = "/home/pi/video.mp4";
+    
+    ofxOMXPlayerSettings settings;
+    settings.videoPath = videoLocation;
+    settings.useHDMIForAudio = false;	//default true
+    settings.enableTexture = true;		//default true
+    settings.enableLooping = true;		//default true
+    settings.enableAudio = false;		//default true, save resources by disabling
+    
+    
+    backgroundVideo.setup(settings);
+//    backgroundVideo.enableLooping();
+
 	
 	
 	
