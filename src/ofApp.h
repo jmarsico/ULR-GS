@@ -93,7 +93,7 @@ public:
     int millisImageTimeout;
 	
 	// flag to display image
-    bool newImageReady = false;
+    bool newImageReady;
     
     bool bDrawImage;
     int width, height;
