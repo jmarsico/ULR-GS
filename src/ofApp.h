@@ -34,7 +34,34 @@ public:
 		ofLog() << "File added: " << evt.item.path();
     }
 	
+	void onDirectoryWatcherItemRemoved(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
+		ofLogToFile("log.txt", true);
+		ofSendMessage("Removed:  " + evt.item.path());
+	}
 	
+	void onDirectoryWatcherItemModified(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
+		ofLogToFile("log.txt", true);
+		ofSendMessage("Modified: " + evt.item.path());
+	}
+	
+	void onDirectoryWatcherItemMovedFrom(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
+		ofLogToFile("log.txt", true);
+		ofLogNotice("ofApp::onDirectoryWatcherItemMovedFrom") << "Moved From: " << evt.item.path();
+	}
+	
+	void onDirectoryWatcherItemMovedTo(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
+		ofLogToFile("log.txt", true);
+		ofLogNotice("ofApp::onDirectoryWatcherItemMovedTo") << "Moved To: " << evt.item.path();
+	}
+
+	// directory watcher error
+    void onDirectoryWatcherError(const Poco::Exception& exc) {
+        ofLogError() << "Error: " << exc.displayText();
+		
+		ofLogToFile("log.txt", true);
+		ofLogError() << "Error: " << exc.displayText();
+    }
+
 	// directory watcher
     ofxIO::DirectoryWatcherManager watcher;
 	
