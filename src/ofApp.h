@@ -27,21 +27,21 @@ public:
 		
 		// send a message to the message queue
         ofSendMessage(evt.item.path());
-		
-		ofLog() << "File added: " << evt.item.path();
-		
-		ofLogToFile("log.txt", true);
-		ofLog() << "File added: " << evt.item.path();
+//		
+//		ofLog() << "File added: " << evt.item.path();
+//		
+//		ofLogToFile("log.txt", true);
+//		ofLog() << "File added: " << evt.item.path();
     }
 	
 	void onDirectoryWatcherItemRemoved(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
 		ofLogToFile("log.txt", true);
-		ofSendMessage("Removed:  " + evt.item.path());
+//		ofSendMessage("Removed:  " + evt.item.path());
 	}
 	
 	void onDirectoryWatcherItemModified(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
 		ofLogToFile("log.txt", true);
-		ofSendMessage("Modified: " + evt.item.path());
+//		ofSendMessage("Modified: " + evt.item.path());
 	}
 	
 	void onDirectoryWatcherItemMovedFrom(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
