@@ -10,7 +10,8 @@ void ofApp::setup() {
     millisImageTimeout = 5000;
 	
     imageStartTime = 0;
-	
+    newImageReady = false;
+    bDrawImage = false;
 	
 	string videoLocation;
     videoLocation = "/home/pi/video.mp4";
@@ -47,14 +48,6 @@ void ofApp::setup() {
 
 void ofApp::update() {
 	
-	#ifdef TARGET_RASPBERRY_PI
-	
-	#else
-		// continue to play video
-		backgroundVideo.update();
-	#endif
-	
-
 	// if there's a new image
     if (newImageReady) {
 		
@@ -66,6 +59,12 @@ void ofApp::update() {
 		
         newImageReady = false;
     }
+    
+    
+    if(imageStartTime + millisImageTimeout > ofGetElapsedTimeMillis()){
+        bDrawImage = false;
+    }
+    
 	
 }
 
@@ -80,10 +79,10 @@ void ofApp::draw() {
     ofFill();
 	
 	// if there's an image to be displayed, and it hasn't timed out
-    if (currentImage.isAllocated() && imageStartTime + millisImageTimeout > ofGetElapsedTimeMillis()) {
+    if (currentImage.isAllocated() && bDrawImage ) {
 		
 		// draw the image
-        currentImage.draw(50, 50, ofGetWidth() - 100, ofGetHeight() - 100);
+        currentImage.draw(0,0);
 		
     }
 }
@@ -105,6 +104,7 @@ void ofApp::gotMessage(ofMessage msg) {
 		// get the image ready to display
         imageLocation = msg.message;
         newImageReady = true;
+        bDrawImage = true;
 		
     }
     
