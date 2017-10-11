@@ -96,5 +96,6 @@ public:
     bool newImageReady = false;
     
     bool bDrawImage;
+    int width, height;
 	
 };

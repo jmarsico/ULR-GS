@@ -5,6 +5,9 @@ void ofApp::setup() {
 	// set window
     ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight());
     ofSetWindowPosition(0, 20);
+    
+    width = ofGetWidth();
+    height = ofGetHeight();
 	
 	// amount of time image should be displayed, in ms
     millisImageTimeout = 5000;
@@ -55,14 +58,18 @@ void ofApp::update() {
         currentImage.clear();
 		
 		// load the new one
-        currentImage.load(imageLocation);
-		
+        if(currentImage.load(imageLocation)){
+            ofLog() << "loaded";
+        } else {
+            ofLog() << "could not load";
+        }
         newImageReady = false;
     }
     
     
     if(imageStartTime + millisImageTimeout > ofGetElapsedTimeMillis()){
         bDrawImage = false;
+        ofLog() << "finished showing image";
     }
     
 	
@@ -74,16 +81,15 @@ void ofApp::draw() {
     ofBackground(0);
 	
 	// draw the video
-    backgroundVideo.draw(0, 0, ofGetWidth(), ofGetHeight());
+    backgroundVideo.draw(0, 0, width, height);
 	
     ofFill();
 	
 	// if there's an image to be displayed, and it hasn't timed out
-    if (currentImage.isAllocated() && bDrawImage ) {
+    if ( bDrawImage ) {
 		
 		// draw the image
-        currentImage.draw(0,0);
-		
+        currentImage.draw(0,0, width, height);
     }
 }
 
