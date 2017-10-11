@@ -14,10 +14,11 @@ void ofApp::setup() {
 	
 	string videoLocation;
 	#ifdef TARGET_RASPBERRY_PI
-		videoLocation = "/home/pi/Public/video.mp4";
+		videoLocation = "video.mp4";
 		backgroundVideo.loadMovie(videoLocation);
+        backgroundVideo.enableLooping();
 	#else
-		videoLocation = "/Users/johnmars/Public/video.mp4";
+		videoLocation = "video.mp4";
 	
 		// load video
 		if (backgroundVideo.load(videoLocation)) {
@@ -39,9 +40,9 @@ void ofApp::setup() {
 	
 	string folderToWatch;
 	#ifdef TARGET_RASPBERRY_PI
-		folderToWatch = ofToDataPath("/mnt/watchme", false);
+		folderToWatch = ofToDataPath("", false);
 	#else
-		folderToWatch = ofToDataPath("/Users/johnmars/Public", false);
+		folderToWatch = ofToDataPath("", false);
 	#endif
 	
 	// start the watcher
@@ -96,9 +97,11 @@ void ofApp::draw() {
 void ofApp::gotMessage(ofMessage msg) {
 	
 	// if the new file is a PNG
-    if (ofIsStringInString(msg.message, ".png")) {
+    if (ofIsStringInString(msg.message, ".png")
+        || ofIsStringInString(msg.message, ".jpg")
+        || ofIsStringInString(msg.message, ".jpeg")) {
 		
-        printf("Event contains PNG");
+        printf("Event contains png, jpg or jpeg");
         printf("Elapsed Time milliseconds: %llu", ofGetElapsedTimeMillis());
 		
         imageStartTime = ofGetElapsedTimeMillis();
