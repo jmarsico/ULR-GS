@@ -32,7 +32,7 @@ void ofApp::setup() {
 //    backgroundVideo.enableLooping();
 
 	
-	
+    waitCounter = 0;
 	
 	// set up directory watcher
     watcher.registerAllEvents(this);
@@ -54,27 +54,27 @@ void ofApp::update() {
 	
 	// if there's a new image
     if (newImageReady) {
-	ofLog() << "new image************";	
-		// clear the old one
-        currentImage.clear();
-		
-//        currentImage.allocate(width,height, OF_IMAGE_COLOR);
+        waitCounter ++;
+        
+        
+        if(waitCounter > 100){
+            ofLog() << "new image************";
+            // clear the old one
+            currentImage.clear();
+            
+            bool success = currentImage.load(imageLocation);
+            if(success){
+                ofLog() << "loaded********************";
+            } else {
+                ofLog() << "could not load";
+            }
+            newImageReady = false;
+
+        }
+        
         
 		// load the new on
-	bool success = currentImage.load(imageLocation);
-        if(success){
-            ofLog() << "loaded********************";
-        } else {
-            ofLog() << "could not load";
-        }
-        newImageReady = false;
-	bDrawImage = true;
-    }
-    
-    
-    if((imageStartTime + millisImageTimeout) < ofGetElapsedTimeMillis()){
-        //bDrawImage = false;
-    }
+        
     
 	
 }
@@ -117,6 +117,7 @@ void ofApp::gotMessage(ofMessage msg) {
         ofLog() << "Elapsed Time milliseconds: " << imageStartTime;
         ofLog() << "image path: " << imageLocation;
 		
+        waitCounter = 0;
     }
     
     

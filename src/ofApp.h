@@ -85,6 +85,7 @@ public:
 	
 	// image
     ofImage currentImage;
+    int waitCounter;
 	
 	// when to start image
     int imageStartTime;
