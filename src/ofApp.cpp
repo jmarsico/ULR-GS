@@ -9,7 +9,7 @@ void ofApp::setup() {
     
     ofxJSONElement config;
     
-    
+    ofSetFrameRate(30);
     receiver.setup(12345);
 
     bool success = config.open("config.json");
@@ -66,24 +66,25 @@ void ofApp::setup() {
 void ofApp::update() {
     
     
-    while(receiver.hasWaitingMessages()){
-        // get the next message
-        ofxOscMessage m;
-        receiver.getNextMessage(m);
-        
-        bool bSwitchMess = false;
-        
-        if(m.getAddress() == "/switch"){
-            bSwitchMess = true;
-        }
+//    while(receiver.hasWaitingMessages()){
+//        // get the next message
+//        ofxOscMessage m;
+//        receiver.getNextMessage(m);
+//        
+//        bool bSwitchMess = false;
+//        
+//        if(m.getAddress() == "/switch"){
+//            bSwitchMess = true;
+//        }
+//    }
 
 	
 	// if there's a new image
-    if (newImageReady ++ bSwitchMess) {
+    if (newImageReady) {
         waitCounter ++;
         
         
-//        if(waitCounter > 100){
+        if(waitCounter > 100){
             ofLog() << "new image************";
             // clear the old one
             currentImage.clear();
@@ -98,7 +99,7 @@ void ofApp::update() {
             imageStartTime = ofGetElapsedTimeMillis();
 	    
 
-//        }
+        }
     }
         
         
