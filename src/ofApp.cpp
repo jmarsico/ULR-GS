@@ -90,10 +90,10 @@ void ofApp::draw() {
     ofFill();
 	
 	// if there's an image to be displayed, and it hasn't timed out
-   if ( bDrawImage ) {
+   if ( imageStartTime + millisImageTimeout > ofGetElapsedTimeMillis() ) {
 	ofLog() << "drawing the image";		
 		// draw the image
-        currentImage.draw(0,0, width, height);
+        currentImage.draw(0,0);
     }
 }
 
