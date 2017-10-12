@@ -1,3 +1,4 @@
 ofxIO
 ofxOMXPlayer
 ofxJSON
+ofxOsc
