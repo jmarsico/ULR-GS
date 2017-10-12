@@ -4,6 +4,9 @@
 #include <deque>
 #include "ofMain.h"
 #include "ofxIO.h"
+#include "ofxJSON.h"
+#include "ofxOsc.h"
+
 
 #ifdef TARGET_RASPBERRY_PI
 	#include "ofxOMXPlayer.h"
@@ -98,5 +101,7 @@ public:
     
     bool bDrawImage;
     int width, height;
+    
+    ofxOscReceiver receiver;
 	
 };

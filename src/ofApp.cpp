@@ -3,21 +3,41 @@
 void ofApp::setup() {
 	
 	// set window
-//    ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight());
-//   ofSetWindowPosition(0, 20);
+
+    string videoLocation;
+    string folderToWatch;
     
-    width = ofGetWidth();
+    ofxJSONElement config;
+    
+    
+    receiver.setup(12345);
+
+    bool success = config.open("config.json");
+    if(success){
+        ofLog() << "loaded config file";
+        millisImageTimeout = config["timeout"].asInt();
+        videoLocation = config["videoLocation"].asString();
+        folderToWatch = config["folderToWatch"].asString();
+        
+    } else{
+        ofLog() << "could not load config file";
+        millisImageTimeout = 8000;
+        folderToWatch = ofToDataPath("/home/pi/inbox/", true);
+        videoLocation = "/home/pi/video.mp4";
+    }
+    
+    
+    width= ofGetWidth();
     height = ofGetHeight();
 	
 	// amount of time image should be displayed, in ms
-    millisImageTimeout = 5000;
 	
     imageStartTime = 0;
     newImageReady = false;
     bDrawImage = false;
 	
-	string videoLocation;
-    videoLocation = "/home/pi/video.mp4";
+	
+    
     
     ofxOMXPlayerSettings settings;
     settings.videoPath = videoLocation;
@@ -26,38 +46,44 @@ void ofApp::setup() {
     settings.enableLooping = true;		//default true
     settings.enableAudio = false;		//default true, save resources by disabling
     
-    currentImage.allocate(width,height,OF_IMAGE_COLOR); 
-//    currentImage.load("screen_hub_spoke_zones-01.jpg");
+    
     backgroundVideo.setup(settings);
-//    backgroundVideo.enableLooping();
 
 	
-    waitCounter = 0;
+    currentImage.allocate(width,height,OF_IMAGE_COLOR);
 	
 	// set up directory watcher
     watcher.registerAllEvents(this);
+    watcher.addPath(folderToWatch, false, &hiddenFileFilter);
 	
 	
-	string folderToWatch;
-//	#ifdef TARGET_RASPBERRY_PI
-		folderToWatch = ofToDataPath("/home/pi/inbox/", true);
-//	#else
-//		folderToWatch = ofToDataPath("", false);
-//	#endif
-	
-	// start the watcher
-   watcher.addPath(folderToWatch, false, &hiddenFileFilter);
+	waitCounter = 0;
+
+   
     
 }
 
 void ofApp::update() {
+    
+    
+    while(receiver.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        receiver.getNextMessage(m);
+        
+        bool bSwitchMess = false;
+        
+        if(m.getAddress() == "/switch"){
+            bSwitchMess = true;
+        }
+
 	
 	// if there's a new image
-    if (newImageReady) {
+    if (newImageReady ++ bSwitchMess) {
         waitCounter ++;
         
         
-        if(waitCounter > 100){
+//        if(waitCounter > 100){
             ofLog() << "new image************";
             // clear the old one
             currentImage.clear();
@@ -69,10 +95,10 @@ void ofApp::update() {
                 ofLog() << "could not load";
             }
             newImageReady = false;
-	    imageStartTime = ofGetElapsedTimeMillis();
+            imageStartTime = ofGetElapsedTimeMillis();
 	    
 
-        }
+//        }
     }
         
         
@@ -88,18 +114,18 @@ void ofApp::draw() {
     ofBackground(0);
 	
 	// draw the video
-    
 	
     ofFill();
 	
 	// if there's an image to be displayed, and it hasn't timed out
    if ( imageStartTime + millisImageTimeout > ofGetElapsedTimeMillis() ) {
-	ofLog() << "drawing the image";		
+//	ofLog() << "drawing the image";		
 		// draw the image
         currentImage.draw(0,0);
    } else {
        backgroundVideo.draw(0, 0, width, height);
    }
+
 }
 
 
