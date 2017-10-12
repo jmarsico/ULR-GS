@@ -20,7 +20,7 @@ public:
     void draw();
 
 	// parse items from message queue. overrides built-in defininition of gotMessage()
-    void gotMessage(ofMessage msg);
+    void gotMessage(ofMessage msg) override;
 
 	// item added to directory
     void onDirectoryWatcherItemAdded(const ofxIO::DirectoryWatcherManager::DirectoryEvent& evt) {
@@ -28,7 +28,7 @@ public:
 		// send a message to the message queue
         ofSendMessage(evt.item.path());
 //		
-//		ofLog() << "File added: " << evt.item.path();
+		ofLog() << "File added: " << evt.item.path();
 //		
 //		ofLogToFile("log.txt", true);
 //		ofLog() << "File added: " << evt.item.path();

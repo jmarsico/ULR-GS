@@ -3,8 +3,8 @@
 void ofApp::setup() {
 	
 	// set window
-    ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight());
-    ofSetWindowPosition(0, 20);
+//    ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight());
+//   ofSetWindowPosition(0, 20);
     
     width = ofGetWidth();
     height = ofGetHeight();
@@ -27,7 +27,7 @@ void ofApp::setup() {
     settings.enableAudio = false;		//default true, save resources by disabling
     
     currentImage.allocate(width,height,OF_IMAGE_COLOR); 
-    currentImage.load("screen_hub_spoke_zones-01.jpg");
+//    currentImage.load("screen_hub_spoke_zones-01.jpg");
     backgroundVideo.setup(settings);
 //    backgroundVideo.enableLooping();
 
@@ -39,11 +39,11 @@ void ofApp::setup() {
 	
 	
 	string folderToWatch;
-	#ifdef TARGET_RASPBERRY_PI
-		folderToWatch = ofToDataPath("/home/pi/inbox/", false);
-	#else
-		folderToWatch = ofToDataPath("", false);
-	#endif
+//	#ifdef TARGET_RASPBERRY_PI
+		folderToWatch = ofToDataPath("/home/pi/inbox/", true);
+//	#else
+//		folderToWatch = ofToDataPath("", false);
+//	#endif
 	
 	// start the watcher
     watcher.addPath(folderToWatch, false, &hiddenFileFilter);
@@ -56,23 +56,24 @@ void ofApp::update() {
     if (newImageReady) {
 	ofLog() << "new image************";	
 		// clear the old one
-//        currentImage.clear();
+        currentImage.clear();
 		
-        currentImage.allocate(width,height, OF_IMAGE_COLOR);
+//        currentImage.allocate(width,height, OF_IMAGE_COLOR);
         
 		// load the new on
 	bool success = currentImage.load(imageLocation);
         if(success){
-            ofLog() << "loaded";
+            ofLog() << "loaded********************";
         } else {
             ofLog() << "could not load";
         }
         newImageReady = false;
+	bDrawImage = true;
     }
     
     
-    if(imageStartTime + millisImageTimeout > ofGetElapsedTimeMillis()){
-        bDrawImage = false;
+    if((imageStartTime + millisImageTimeout) < ofGetElapsedTimeMillis()){
+        //bDrawImage = false;
     }
     
 	
@@ -84,16 +85,16 @@ void ofApp::draw() {
     ofBackground(0);
 	
 	// draw the video
-//    backgroundVideo.draw(0, 0, width, height);
+    backgroundVideo.draw(0, 0, width, height);
 	
     ofFill();
 	
 	// if there's an image to be displayed, and it hasn't timed out
-   // if ( bDrawImage ) {
-		
+   if ( bDrawImage ) {
+	ofLog() << "drawing the image";		
 		// draw the image
         currentImage.draw(0,0, width, height);
-   // }
+    }
 }
 
 
