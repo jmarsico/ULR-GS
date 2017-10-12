@@ -4,6 +4,7 @@
 #include <deque>
 #include "ofMain.h"
 #include "ofxIO.h"
+#include "ofxJSON.h"
 
 #ifdef TARGET_RASPBERRY_PI
 	#include "ofxOMXPlayer.h"

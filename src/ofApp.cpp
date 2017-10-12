@@ -5,12 +5,20 @@ void ofApp::setup() {
 	// set window
 //    ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight());
 //   ofSetWindowPosition(0, 20);
-    
-    width = ofGetWidth();
+    ofxJSONElement config;
+    bool success = config.open("config.json");
+    if(success){
+	ofLog() << "loaded config file";
+	millisImageTimeout = config["timeout"].asInt();
+    } else{
+	ofLog() << "could not load config file";
+	millisImageTimeout = 8000;
+    }
+    width= ofGetWidth();
     height = ofGetHeight();
 	
 	// amount of time image should be displayed, in ms
-    millisImageTimeout = 5000;
+    //millisImageTimeout = 5000;
 	
     imageStartTime = 0;
     newImageReady = false;
@@ -88,7 +96,7 @@ void ofApp::draw() {
     ofBackground(0);
 	
 	// draw the video
-    backgroundVideo.draw(0, 0, width, height);
+   // backgroundVideo.draw(0, 0, width, height);
 	
     ofFill();
 	
@@ -97,7 +105,10 @@ void ofApp::draw() {
 	ofLog() << "drawing the image";		
 		// draw the image
         currentImage.draw(0,0);
-    }
+    } else {
+	backgroundVideo.draw(0,0,width,height);
+	}
+
 }
 
 
