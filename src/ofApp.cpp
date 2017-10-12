@@ -46,7 +46,7 @@ void ofApp::setup() {
 //	#endif
 	
 	// start the watcher
-    watcher.addPath(folderToWatch, false, &hiddenFileFilter);
+   watcher.addPath(folderToWatch, false, &hiddenFileFilter);
     
 }
 
@@ -69,8 +69,11 @@ void ofApp::update() {
                 ofLog() << "could not load";
             }
             newImageReady = false;
+	    imageStartTime = ofGetElapsedTimeMillis();
+	    
 
         }
+    }
         
         
 		// load the new on
@@ -107,7 +110,7 @@ void ofApp::gotMessage(ofMessage msg) {
 		
 
 		
-        imageStartTime = ofGetElapsedTimeMillis();
+       // imageStartTime = ofGetElapsedTimeMillis();
 		
 		// get the image ready to display
         imageLocation = msg.message;
