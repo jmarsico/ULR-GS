@@ -88,7 +88,7 @@ void ofApp::draw() {
     ofBackground(0);
 	
 	// draw the video
-    backgroundVideo.draw(0, 0, width, height);
+    
 	
     ofFill();
 	
@@ -97,7 +97,9 @@ void ofApp::draw() {
 	ofLog() << "drawing the image";		
 		// draw the image
         currentImage.draw(0,0);
-    }
+   } else {
+       backgroundVideo.draw(0, 0, width, height);
+   }
 }
 
 
